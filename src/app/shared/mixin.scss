@@ -1,0 +1,19 @@
+@mixin bG() {
+    width: 100%;
+    height: 100vh;
+    max-height: 100%;
+    background-image: url('../../assets/img/board.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+@mixin dFlex($justify: center, $align: center, $gap: 0px, $direction: null) {
+    display: flex;
+    justify-content: $justify;
+    align-items: $align;
+    gap: $gap;
+
+    @if $direction != null {
+        flex-direction: $direction;
+    }
+}

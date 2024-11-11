@@ -1,0 +1,65 @@
+@import '../shared/mixin.scss';
+
+.player-position {
+    position: absolute;
+    right: 0;
+}
+
+section {
+    @include bG();
+    @include dFlex();
+
+
+    >div {
+        position: relative;
+
+        >img {
+            position: absolute;
+            width: 120px;
+        }
+    }
+}
+
+.top-card {
+    cursor: pointer;
+    transition: all 125ms ease-in-out;
+
+    &:hover {
+        transform: scale(1.1) translateY(-10px);
+    }
+}
+
+.pick-card {
+    animation: pick-card-animation 1.25s ease-in-out;
+    transform: scale(1.7) translateX(-250px) translateY(-180px) rotate(-30deg);
+}
+
+@keyframes pick-card-animation {
+    0% {
+        transform: scale(1.1);
+    }
+    65% {
+        transform: scale(1.7);
+    }
+    100% {
+        transform: scale(1.7) translateX(-250px) translateY(-180px) rotate(-30deg);
+    }
+}
+
+.played-card {
+    right: 25px;
+    transform: scale(1.7) translateX(-250px) translateY(-180px) rotate(-30deg);
+}
+
+.btn-add {
+    position: absolute;
+    right: 72px;
+    bottom: 72px;
+}
+
+.pin-bottom {
+    position: absolute;
+    left: 180px;
+    right: 180px;
+    bottom: 100px;
+}

@@ -1,0 +1,28 @@
+@import '../shared/mixin.scss';
+
+section {
+    @include bG();
+    @include dFlex();
+
+    >img {
+        height: 80vh;
+    }
+
+    >div {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 20%;
+        @include dFlex();
+
+        >img {
+            width: 40vh;
+            height: auto;
+
+            &:hover {
+                filter: brightness(1.25);
+                cursor: pointer;
+            }
+        }
+    }
+}
