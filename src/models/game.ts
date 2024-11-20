@@ -21,6 +21,15 @@ export class Game {
         this.shuffle(this.stack)
     }
 
+    public toJson() {
+        return {
+            players: this.players,
+            stack: this.stack,
+            playerCards: this.playerCards,
+            currentPlayer: this.currentPlayer
+        }
+    }
+
     shuffle<T>(array: T[]): T[] {
         let currentIndex = array.length, randomIndex;
 
