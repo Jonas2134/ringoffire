@@ -1,24 +1,29 @@
-import { Injectable } from "@angular/core";
-
-@Injectable({
-    providedIn: 'root',
-})
 
 export class Game {
     public players: string[] = [];
     public stack: string[] = [];
     public playerCards: string[] = [];
     public currentPlayer: number = 0;
+    public pickCardAnimation: boolean = false;
+    public currentCard: string | undefined = '';
 
-    constructor() {
-        for (let i = 1; i < 14; i++) {
-            this.stack.push('ace_' + i);
-            this.stack.push('clubs_' + i);
-            this.stack.push('diamonds_' + i);
-            this.stack.push('hearts_' + i);
+    constructor(gameData?: Partial<Game>) {
+        if (gameData) {
+            this.players = gameData.players || [];
+            this.stack = gameData.stack || [];
+            this.playerCards = gameData.playerCards || [];
+            this.currentPlayer = gameData.currentPlayer ?? 0;
+            this.pickCardAnimation = gameData.pickCardAnimation ?? false;
+            this.currentCard = gameData.currentCard;
+        } else {
+            for (let i = 1; i < 14; i++) {
+                this.stack.push('ace_' + i);
+                this.stack.push('clubs_' + i);
+                this.stack.push('diamonds_' + i);
+                this.stack.push('hearts_' + i);
+            }
+            this.shuffle(this.stack);
         }
-
-        this.shuffle(this.stack)
     }
 
     public toJson() {
@@ -26,7 +31,9 @@ export class Game {
             players: this.players,
             stack: this.stack,
             playerCards: this.playerCards,
-            currentPlayer: this.currentPlayer
+            currentPlayer: this.currentPlayer,
+            pickCardAnimation: this.pickCardAnimation,
+            currentCard: this.currentCard
         }
     }
 

@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DialogAddPlayerComponent } from '../dialog-add-player/dialog-add-player.component';
 import { Game } from '../../models/game';
 import { GameService } from '../firebase-services/game.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-game',
@@ -17,34 +18,54 @@ import { GameService } from '../firebase-services/game.service';
   styleUrl: './game.component.scss'
 })
 export class GameComponent {
-  coverCards = Array.from({ length: 5 }, (_, i) => ({ name: `Image ${i + 1}` }));
-  pickCardAnimation: boolean = false;
   game!: Game;
-  currentCard: string | undefined = '';
+  gameId!: string;
 
-  constructor(public dialog: MatDialog, public gameService: GameService) {}
+  private unsubscribe!: () => void;
+
+  coverCards = Array.from({ length: 5 }, (_, i) => ({ name: `Image ${i + 1}` }));
+
+  constructor(private route: ActivatedRoute, public dialog: MatDialog, public gameService: GameService) { }
 
   ngOnInit(): void {
-    this.newGame();
-   this.gameService.subGameData();
+    this.route.params.subscribe((params) => {
+      this.gameId = params['id'];
+      this.subscribeToGameUpdates();
+    })
   }
 
-  newGame() {
-    this.game = new Game();
+
+  subscribeToGameUpdates() {
+    this.unsubscribe = this.gameService.subGameData(this.gameId, (updatedGame) => {
+      if (updatedGame) {
+        this.game = updatedGame;
+        console.log('Game data updated: ', this.game);
+      } else {
+        console.error('Game data could not be loaded.');
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   }
 
   takeCard() {
-    if (!this.pickCardAnimation) {
-      this.currentCard = this.game!.stack.pop();
-      this.pickCardAnimation = true;
+    if (!this.game.pickCardAnimation) {
+      this.game.currentCard = this.game!.stack.pop();
+      this.game.pickCardAnimation = true;
+      this.gameService.updateGame(this.gameId, this.game.toJson());
 
       setTimeout(() => {
-        if (this.currentCard) {
-          this.game.playerCards.push(this.currentCard);
+        if (this.game.currentCard) {
+          this.game.playerCards.push(this.game.currentCard);
         }
         this.game.currentPlayer++;
         this.game.currentPlayer = this.game.currentPlayer % this.game.players.length;
-        this.pickCardAnimation = false;
+        this.game.pickCardAnimation = false;
+        this.gameService.updateGame(this.gameId, this.game.toJson());
       }, 1250);
     }
   }
@@ -55,6 +76,7 @@ export class GameComponent {
     dialogRef.afterClosed().subscribe((name: string) => {
       if (name && name.length > 0) {
         this.game.players.push(name);
+        this.gameService.updateGame(this.gameId, this.game.toJson());
       }
     });
   }
